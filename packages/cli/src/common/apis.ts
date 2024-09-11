@@ -16,12 +16,12 @@ export const getFeeRate = async function (
   config: ConfigService,
   wallet: WalletService,
 ): Promise<number> {
-  if (config.useRpc()) {
+  if (false && config.useRpc()) {
     const feeRate = await rpc_getfeeRate(config, wallet.getWalletName());
     if (feeRate instanceof Error) {
       return 2;
     }
-    return feeRate;
+    return feeRate as number;
   }
 
   const url = `${config.getApiHost()}/api/v1/fees/recommended`;
@@ -36,6 +36,7 @@ export const getFeeRate = async function (
       console.error(`fetch feeRate failed:`, e);
       return {};
     });
+  console.log(`feeRate:`, url, feeRate);
 
   if (!feeRate) {
     return 2;

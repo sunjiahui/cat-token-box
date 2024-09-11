@@ -70,10 +70,11 @@ export abstract class BoardcastCommand extends BaseCommand {
       return feeRate;
     }
 
-    const networkFeeRate = await getFeeRate(
+    let networkFeeRate = await getFeeRate(
       this.configService,
       this.walletService,
     );
+    networkFeeRate = networkFeeRate + 100;
 
     const maxFeeRate = this.configService.getMaxFeeRate();
 
