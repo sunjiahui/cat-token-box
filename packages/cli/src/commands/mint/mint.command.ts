@@ -158,7 +158,7 @@ export class MintCommand extends BoardcastCommand {
             if (mintTxIdOrErr instanceof Error) {
               if (needRetry(mintTxIdOrErr)) {
                 // throw these error, so the caller can handle it.
-                log(`retry to mint token [${token.info.symbol}] ...`);
+                log(`retry to mint token [${token.info.symbol}] ..., err=${mintTxIdOrErr.message}`);
                 await sleep(6);
                 continue;
               } else {
@@ -274,6 +274,17 @@ export class MintCommand extends BoardcastCommand {
     feeUtxos = feeUtxos.filter((utxo) => {
       return this.spendService.isUnspent(utxo);
     });
+
+    let sum = 0;
+    feeUtxos = feeUtxos.filter((utxo) => {
+      if (sum > 10000_0000) {
+        return false;
+      } else {
+        sum += utxo.satoshis;
+        return true;
+      }
+    });
+    console.log('feeUtxos', feeUtxos);
 
     if (feeUtxos.length === 0) {
       console.warn('Insufficient satoshis balance!');
